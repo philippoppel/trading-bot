@@ -365,6 +365,34 @@ class SafeMultiSymbolTrader:
         if loss <= self.max_loss_per_symbol:
             logger.warning(f"🛑 STOP-LOSS triggered for {symbol}: {loss*100:.2f}%")
             trader['max_loss_reached'] = True
+
+            # Record trade history for stop-loss closure
+            if trader['position'] != 0:
+                current_price = trader['current_price']
+                trade_time = datetime.now()
+
+                trade_record = {
+                    'timestamp': trade_time.isoformat(),
+                    'symbol': symbol,
+                    'action_type': 'STOP_LOSS',
+                    'old_position': trader['position'],
+                    'new_position': 0.0,
+                    'position_change': -trader['position'],
+                    'price': current_price,
+                    'trade_value': abs(trader['position_value']),
+                    'fee': 0.0,
+                    'slippage': 0.0,
+                    'total_cost': 0.0,
+                    'balance_before': trader['balance'],
+                    'balance_after': portfolio_value,
+                    'portfolio_value_before': portfolio_value,
+                    'portfolio_value_after': portfolio_value,
+                    'reasoning': f"Stop-loss triggered at {loss*100:.2f}% loss",
+                    'model_action': 0.0
+                }
+
+                trader['trade_history'].append(trade_record)
+
             # Close all positions
             trader['position'] = 0.0
             trader['balance'] = portfolio_value
@@ -387,21 +415,51 @@ class SafeMultiSymbolTrader:
 
         # Bei Long: Profit wenn Preis steigt
         # Bei Short: Profit wenn Preis fällt (pnl_pct negativ ist gut)
+        should_take_profit = False
+        profit_text = ""
+
         if trader['position'] > 0:  # Long
             if pnl_pct >= self.take_profit_pct:
-                logger.info(f"✅ TAKE-PROFIT triggered for {symbol}: +{pnl_pct*100:.2f}%")
-                # Close position
-                trader['balance'] = self.get_portfolio_value(symbol)
-                trader['position'] = 0.0
-                trader['position_value'] = 0.0
-                return True
+                should_take_profit = True
+                profit_text = f"+{pnl_pct*100:.2f}%"
         else:  # Short
             if pnl_pct <= -self.take_profit_pct:
-                logger.info(f"✅ TAKE-PROFIT triggered for {symbol}: +{abs(pnl_pct)*100:.2f}%")
-                trader['balance'] = self.get_portfolio_value(symbol)
-                trader['position'] = 0.0
-                trader['position_value'] = 0.0
-                return True
+                should_take_profit = True
+                profit_text = f"+{abs(pnl_pct)*100:.2f}%"
+
+        if should_take_profit:
+            logger.info(f"✅ TAKE-PROFIT triggered for {symbol}: {profit_text}")
+
+            portfolio_value_before = self.get_portfolio_value(symbol)
+            trade_time = datetime.now()
+
+            trade_record = {
+                'timestamp': trade_time.isoformat(),
+                'symbol': symbol,
+                'action_type': 'TAKE_PROFIT',
+                'old_position': trader['position'],
+                'new_position': 0.0,
+                'position_change': -trader['position'],
+                'price': current_price,
+                'trade_value': abs(trader['position_value']),
+                'fee': 0.0,
+                'slippage': 0.0,
+                'total_cost': 0.0,
+                'balance_before': trader['balance'],
+                'balance_after': portfolio_value_before,
+                'portfolio_value_before': portfolio_value_before,
+                'portfolio_value_after': portfolio_value_before,
+                'reasoning': f"Take-profit triggered at {profit_text} gain",
+                'model_action': 0.0
+            }
+
+            trader['trade_history'].append(trade_record)
+
+            # Close position
+            trader['balance'] = portfolio_value_before
+            trader['position'] = 0.0
+            trader['position_value'] = 0.0
+            return True
 
         return False
 
@@ -476,7 +534,7 @@ class SafeMultiSymbolTrader:
 
         return obs, current_price
 
-    def execute_action(self, symbol: str, action: float, current_price: float):
+    def execute_action(self, symbol: str, action: float, current_price: float, reasoning: str = "Model decision"):
         """Führt Trading-Aktion aus mit Risk Management."""
         trader = self.traders[symbol]
 
@@ -489,8 +547,8 @@ class SafeMultiSymbolTrader:
             return
 
         # Calculate trade
-        portfolio_value = trader['balance'] + trader['position_value']
-        trade_value = abs(position_diff) * portfolio_value
+        portfolio_value_before = trader['balance'] + trader['position_value']
+        trade_value = abs(position_diff) * portfolio_value_before
 
         # Fees (inkl. Slippage estimate)
         fee = trade_value * self.fee_rate
@@ -501,22 +559,52 @@ class SafeMultiSymbolTrader:
 
         # Update position
         old_position = trader['position']
+        old_balance = trader['balance']
         trader['position'] = target_position
 
-        if position_diff > 0:  # Buying
+        # Determine action type
+        if position_diff > 0:  # Buying/Going Long
+            action_type = "BUY" if old_position >= 0 else "COVER"
             trader['balance'] -= trade_value + total_cost
-            trader['position_value'] = trader['position'] * portfolio_value
-        else:  # Selling
+            trader['position_value'] = trader['position'] * portfolio_value_before
+        else:  # Selling/Going Short
+            action_type = "SELL" if old_position > 0 else "SHORT"
             trader['balance'] += trade_value - total_cost
-            trader['position_value'] = trader['position'] * portfolio_value
+            trader['position_value'] = trader['position'] * portfolio_value_before
 
         trader['entry_price'] = current_price
         trader['num_trades'] += 1
-        trader['last_trade_time'] = datetime.now()
-        trader['trades_last_hour'].append(datetime.now())
+        trade_time = datetime.now()
+        trader['last_trade_time'] = trade_time
+        trader['trades_last_hour'].append(trade_time)
+
+        portfolio_value_after = trader['balance'] + trader['position_value']
+
+        # Record detailed trade history
+        trade_record = {
+            'timestamp': trade_time.isoformat(),
+            'symbol': symbol,
+            'action_type': action_type,
+            'old_position': old_position,
+            'new_position': target_position,
+            'position_change': position_diff,
+            'price': current_price,
+            'trade_value': trade_value,
+            'fee': fee,
+            'slippage': slippage,
+            'total_cost': total_cost,
+            'balance_before': old_balance,
+            'balance_after': trader['balance'],
+            'portfolio_value_before': portfolio_value_before,
+            'portfolio_value_after': portfolio_value_after,
+            'reasoning': reasoning,
+            'model_action': action
+        }
+
+        trader['trade_history'].append(trade_record)
 
         # Log trade
-        logger.info(f"Trade {symbol}: {old_position:.2f} → {target_position:.2f} @ ${current_price:,.2f} | Fee: ${total_cost:.2f}")
+        logger.info(f"Trade {symbol}: {action_type} {old_position:.2f} → {target_position:.2f} @ ${current_price:,.2f} | Fee: ${total_cost:.2f} | {reasoning}")
 
         # Auto-save after trade
         if self.auto_save:
