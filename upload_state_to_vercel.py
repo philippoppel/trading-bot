@@ -14,7 +14,11 @@ from pathlib import Path
 from loguru import logger
 
 # Configuration
-VERCEL_DASHBOARD_URL = os.getenv('VERCEL_DASHBOARD_URL', 'https://trading-dashboard-5oqf34l8u-philipps-projects-0f51423d.vercel.app')
+# Default to the live dashboard that is currently deployed.
+VERCEL_DASHBOARD_URL = os.getenv(
+    'VERCEL_DASHBOARD_URL',
+    'https://trading-dashboard-three-virid.vercel.app'
+)
 UPLOAD_API_KEY = os.getenv('UPLOAD_API_KEY', 'your-secret-key-here')  # Set this in your environment
 STATE_FILE = Path('data/trading_state/safe_multi_symbol_state.json')
 

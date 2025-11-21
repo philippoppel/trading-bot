@@ -65,7 +65,7 @@ gh repo create trading-bot --public --source=. --remote=origin --push
 In Railway dashboard, go to **Variables** and add:
 
 ```
-VERCEL_DASHBOARD_URL=https://trading-dashboard-5oqf34l8u-philipps-projects-0f51423d.vercel.app
+VERCEL_DASHBOARD_URL=https://trading-dashboard-three-virid.vercel.app
 UPLOAD_API_KEY=<your-generated-api-key>
 TRADING_INTERVAL=3600
 UPLOAD_INTERVAL=30
@@ -90,7 +90,7 @@ In Railway dashboard:
 
 ### 4.2 Check Dashboard
 
-1. Go to your dashboard: https://trading-dashboard-5oqf34l8u-philipps-projects-0f51423d.vercel.app
+1. Go to your dashboard: https://trading-dashboard-three-virid.vercel.app
 2. Within 30 seconds you should see live trading data
 3. The dashboard auto-refreshes every 10 seconds
 
