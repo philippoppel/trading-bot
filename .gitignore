@@ -1,5 +1,7 @@
 # Environment
 .env
+.env.testnet
+.env.production
 .venv/
 venv/
 env/
