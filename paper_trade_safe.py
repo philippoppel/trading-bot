@@ -15,6 +15,7 @@ from loguru import logger
 from datetime import datetime, timedelta
 import time
 import shutil
+import requests
 from typing import Optional
 
 # Projekt-Root
@@ -49,7 +50,10 @@ class SafeMultiSymbolTrader:
         state_file: Optional[str] = None,      # State save file
         auto_save: bool = True,                # Auto-save after trades
         save_interval: int = 300,              # Save every N seconds
-        keep_backups: int = 5                  # Number of backups to keep
+        keep_backups: int = 5,                 # Number of backups to keep
+        # DASHBOARD UPLOAD
+        upload_to_dashboard: bool = True,
+        dashboard_url: Optional[str] = None
     ):
         self.initial_balance = initial_balance
         self.fee_rate = fee_rate
@@ -71,6 +75,10 @@ class SafeMultiSymbolTrader:
         self.save_interval = save_interval
         self.keep_backups = keep_backups
         self.last_save_time = None
+
+        # DASHBOARD UPLOAD
+        self.upload_to_dashboard = upload_to_dashboard
+        self.dashboard_url = dashboard_url or os.getenv('DASHBOARD_UPLOAD_URL')
 
         # Setup state file
         if state_file is None:
@@ -243,11 +251,33 @@ class SafeMultiSymbolTrader:
 
             self.last_save_time = datetime.now()
             logger.debug(f"💾 State saved to {self.state_file}")
+
+            # Upload to dashboard
+            if self.upload_to_dashboard and self.dashboard_url:
+                self.upload_state_to_dashboard(state)
+
             return True
 
         except Exception as e:
             logger.error(f"Error saving state: {e}")
             return False
+
+    def upload_state_to_dashboard(self, state: dict):
+        """Upload state to dashboard via API."""
+        try:
+            response = requests.post(
+                self.dashboard_url,
+                json=state,
+                timeout=5
+            )
+
+            if response.status_code == 200:
+                logger.debug("📤 State uploaded to dashboard")
+            else:
+                logger.warning(f"Dashboard upload failed: {response.status_code}")
+
+        except Exception as e:
+            logger.debug(f"Dashboard upload error (non-critical): {e}")
 
     def _create_backup(self):
         """Erstellt ein Backup des State Files."""
@@ -895,7 +925,8 @@ def main():
         max_position_size=args.max_position,
         max_loss_per_symbol=args.max_loss,
         max_total_drawdown=args.max_drawdown,
-        max_trades_per_hour=args.max_trades_hour
+        max_trades_per_hour=args.max_trades_hour,
+        dashboard_url='https://trading-dashboard-83z7kxm6d-philipps-projects-0f51423d.vercel.app/api/upload'
     )
 
     trader.run(interval_seconds=args.interval, detailed_every=args.detailed_every)
