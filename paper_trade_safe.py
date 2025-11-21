@@ -926,7 +926,7 @@ def main():
         max_loss_per_symbol=args.max_loss,
         max_total_drawdown=args.max_drawdown,
         max_trades_per_hour=args.max_trades_hour,
-        dashboard_url='https://trading-dashboard-83z7kxm6d-philipps-projects-0f51423d.vercel.app/api/upload'
+        dashboard_url='https://trading-dashboard-three-virid.vercel.app/api/upload'
     )
 
     trader.run(interval_seconds=args.interval, detailed_every=args.detailed_every)
