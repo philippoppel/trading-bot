@@ -15,13 +15,13 @@ dist/
 *.egg-info/
 
 # Data & Models
-data/*.csv
-data/*.parquet
+data/
+logs/
+models/checkpoints*/
+models/best/
 models/*.zip
 models/*.pkl
-
-# Logs
-logs/*.log
+*.npz
 
 # IDE
 .idea/
