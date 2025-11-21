@@ -21,7 +21,15 @@ models/checkpoints*/
 models/best/
 models/*.zip
 models/*.pkl
+models/*.pt
 *.npz
+
+# Keep only these production models (negated pattern)
+!models/sac_btcusdt_best.zip
+!models/sac_ethusdt_best.zip
+!models/sac_bnbusdt_best.zip
+!models/sac_solusdt_best.zip
+!models/sac_xrpusdt_best.zip
 
 # IDE
 .idea/
