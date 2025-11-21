@@ -1,0 +1,94 @@
+# Crypto Trading Bot Configuration
+
+# Trading Parameters
+trading:
+  symbols:
+    - "BTCUSDT"
+    - "ETHUSDT"
+  timeframe: "1h"
+  initial_balance: 10000.0
+  trading_fee: 0.001  # 0.1% Binance fee
+  slippage: 0.0005    # 0.05% estimated slippage
+
+# Data Collection
+data:
+  history_days: 365           # Days of historical data to fetch
+  update_interval: 3600       # Seconds between data updates (1h)
+  cache_dir: "data"
+
+# Feature Engineering
+features:
+  # Price features
+  lookback_periods: [7, 14, 30, 60]  # Periods for rolling calculations
+
+  # Technical indicators
+  indicators:
+    rsi:
+      period: 14
+    macd:
+      fast: 12
+      slow: 26
+      signal: 9
+    bollinger:
+      period: 20
+      std: 2
+    atr:
+      period: 14
+    volume_sma:
+      period: 20
+
+# Environment Configuration
+environment:
+  observation_window: 48      # Hours of history in observation
+  action_space: "discrete"    # "discrete" or "continuous"
+  reward_scaling: 1.0
+  max_position: 1.0           # Max position size (1.0 = 100%)
+
+# RL Agent Configuration
+agent:
+  algorithm: "PPO"
+  policy: "MlpPolicy"
+
+  # PPO Hyperparameters
+  ppo:
+    learning_rate: 0.0003
+    n_steps: 2048
+    batch_size: 64
+    n_epochs: 10
+    gamma: 0.99
+    gae_lambda: 0.95
+    clip_range: 0.2
+    ent_coef: 0.01
+    vf_coef: 0.5
+    max_grad_norm: 0.5
+
+# Training Configuration
+training:
+  total_timesteps: 5000000
+  eval_freq: 100000
+  n_eval_episodes: 10
+  save_freq: 100000
+  log_interval: 10
+  seed: 42
+
+  # Directories
+  model_dir: "models"
+  log_dir: "logs"
+  tensorboard_dir: "logs/tensorboard"
+
+# Paper Trading
+paper_trading:
+  enabled: true
+  update_interval: 3600     # Check every hour
+  risk_management:
+    max_position_pct: 0.5   # Max 50% of portfolio in one position
+    stop_loss_pct: 0.05     # 5% stop loss
+    take_profit_pct: 0.15   # 15% take profit
+    daily_loss_limit: 0.10  # Stop trading if 10% daily loss
+
+# Logging
+logging:
+  level: "INFO"
+  format: "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
+  rotation: "1 day"
+  retention: "30 days"

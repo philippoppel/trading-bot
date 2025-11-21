@@ -1,0 +1,23 @@
+# Cloud Trading Bot - Minimal Requirements
+
+# Core Data & ML
+numpy==2.0.0
+pandas==2.2.2
+scikit-learn==1.5.0
+
+# Trading & APIs
+python-binance==1.0.19
+requests==2.31.0
+
+# Technical Analysis
+ta==0.11.0
+
+# RL Framework
+stable-baselines3==2.3.2
+gymnasium==0.29.1
+
+# Logging
+loguru==0.7.2
+
+# Environment
+python-dotenv==1.0.0

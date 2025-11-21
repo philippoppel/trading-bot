@@ -1,0 +1,16 @@
+{
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "BNBUSDT",
+    "SOLUSDT",
+    "XRPUSDT"
+  ],
+  "models": {
+    "BTCUSDT": "models/sac_btcusdt_best.zip",
+    "ETHUSDT": "models/sac_ethusdt_best.zip",
+    "BNBUSDT": "models/sac_bnbusdt_best.zip",
+    "SOLUSDT": "models/sac_solusdt_best.zip",
+    "XRPUSDT": "models/sac_xrpusdt_best.zip"
+  }
+}

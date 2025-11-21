@@ -1,0 +1,90 @@
+{
+  "version": "1.0",
+  "timestamp": "2025-11-21T09:48:03.948084",
+  "session_start_time": "2025-11-20T21:01:13.668907",
+  "initial_balance": 10000.0,
+  "emergency_stopped": false,
+  "emergency_reason": null,
+  "traders": {
+    "BTCUSDT": {
+      "balance": 12965.909410361708,
+      "position": -0.3,
+      "position_value": -2998.6351675169394,
+      "entry_price": 84010.31,
+      "total_fees": 31.432624991962996,
+      "num_trades": 23,
+      "trade_history": [],
+      "current_price": 83972.09,
+      "last_trade_time": "2025-11-21T09:00:25.846069",
+      "trades_last_hour": [
+        "2025-11-21T09:00:25.846071"
+      ],
+      "max_loss_reached": false,
+      "highest_value": 10010.92117276946
+    },
+    "ETHUSDT": {
+      "balance": 12995.5,
+      "position": -0.3,
+      "position_value": -2890.302721148265,
+      "entry_price": 2842.55,
+      "total_fees": 4.5,
+      "num_trades": 1,
+      "trade_history": [],
+      "current_price": 2738.61,
+      "last_trade_time": "2025-11-20T21:01:15.409815",
+      "trades_last_hour": [],
+      "max_loss_reached": false,
+      "highest_value": 10162.48387011662
+    },
+    "BNBUSDT": {
+      "balance": 6971.473360636748,
+      "position": 0.3,
+      "position_value": 3002.779014231921,
+      "entry_price": 831.23,
+      "total_fees": 33.32646046670579,
+      "num_trades": 24,
+      "trade_history": [],
+      "current_price": 832.0,
+      "last_trade_time": "2025-11-21T09:02:33.950457",
+      "trades_last_hour": [
+        "2025-11-21T08:57:16.716465",
+        "2025-11-21T09:02:33.950458"
+      ],
+      "max_loss_reached": false,
+      "highest_value": 10031.87034789161
+    },
+    "SOLUSDT": {
+      "balance": 6982.665768065255,
+      "position": 0.3,
+      "position_value": 3016.0163303760696,
+      "entry_price": 127.37,
+      "total_fees": 20.164328996633753,
+      "num_trades": 20,
+      "trade_history": [],
+      "current_price": 128.05,
+      "last_trade_time": "2025-11-21T09:00:27.838586",
+      "trades_last_hour": [
+        "2025-11-21T08:52:00.440667",
+        "2025-11-21T09:00:27.838587"
+      ],
+      "max_loss_reached": false,
+      "highest_value": 10061.97204132046
+    },
+    "XRPUSDT": {
+      "balance": 6981.453161022806,
+      "position": 0.3,
+      "position_value": 3037.2165754495695,
+      "entry_price": 1.9185,
+      "total_fees": 14.174973439507571,
+      "num_trades": 12,
+      "trade_history": [],
+      "current_price": 1.9423,
+      "last_trade_time": "2025-11-21T09:00:28.458427",
+      "trades_last_hour": [
+        "2025-11-21T09:00:28.458428"
+      ],
+      "max_loss_reached": false,
+      "highest_value": 10050.15615818231
+    }
+  }
+}
