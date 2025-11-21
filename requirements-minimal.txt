@@ -1,0 +1,21 @@
+# Minimal requirements für Trading Bot
+# Nur die essentiellen Pakete
+
+# Core dependencies
+numpy>=1.20.0
+pandas>=2.0.0
+python-binance>=1.0.19
+ta>=0.11.0
+pyyaml>=6.0
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+# Machine Learning
+stable-baselines3>=2.0.0
+torch>=2.0.0
+
+# Logging
+loguru>=0.7.0
+
+# Vercel Upload
+requests>=2.31.0
